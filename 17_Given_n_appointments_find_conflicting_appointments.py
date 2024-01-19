@@ -1,16 +1,37 @@
-appointments = [ [[1,5],[3,7],[2,6],[10,15],[5,6],[4,100]] , [[3,7],[2,6],[10,15],[5,6],[4,100]] ]
-for a in appointments:
-    print("finding conflicts for ", a)
-    for i,appointment in enumerate(a):
-        print("Appointments:", i, appointment)
-        start,end = appointment  #current appointment
-        for j in range (i+1,len(a)):
-            print("Compare Appointments:", j, a[j])
-            cond1 ,cond2 = False, False
-            start_next_app,end_next_app = a[j]
-            #Check if next appointment is before current appointment  
-            if (start >= end_next_app): cond1 = True 
-            #Check if the next appointment is after current appointment
-            if  (end <= start_next_app): cond2 = True
-            if (cond1 == False and cond2==False):      
-                print("[%d,%d] conflicts with [%d,%d]" % (start_next_app,end_next_app,start,end))
+class Appointment:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+def findConflictingAppointments(appointments):
+    appointments.sort(key=lambda x: x.start)
+
+    conflicting_appointments = []
+
+    for i in range(len(appointments) - 1):
+        current_appointment = appointments[i]
+
+        # Check for conflicts with future appointments
+        for j in range(i + 1, len(appointments)):
+            future_appointment = appointments[j]
+            if current_appointment.end > future_appointment.start:
+                conflicting_appointments.append((current_appointment, future_appointment))
+
+    return conflicting_appointments
+
+# Example usage:
+appointments = [
+    Appointment(1, 5),
+    Appointment(3, 7),
+    Appointment(2, 6),
+    Appointment(8, 10),
+    Appointment(5, 8),
+]
+
+conflicts = findConflictingAppointments(appointments)
+
+if conflicts:
+    for conflict in conflicts:
+        print(f"Conflicting Appointments: {conflict[0].start}-{conflict[0].end} and {conflict[1].start}-{conflict[1].end}")
+else:
+    print("No conflicting appointments.")
